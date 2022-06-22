@@ -1,6 +1,6 @@
-// $ npm run build; cp - r./ docs/* ./;git add .;git commit -m "any way commit";git push
+// $ npm run build;cp -r ./dist/* ./;git add .;git commit -m "any way commit";git push;rm -r ./dist
 module.exports = {
     publicPath: './',
-    outputDir: './docs',
+    // outputDir: './docs',
     assetsDir: './src',
 }
