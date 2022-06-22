@@ -1,26 +1,29 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App!!!!"/>
+  <h1 id="bar" @click="plus_counter">BAR</h1>
+  <button @click="plus_counter">ABC</button>
+  <div>
+    {{ counter }}
+  </div>
 </template>
-
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
+  data() {
+    return {
+      counter: 10
+    }
+  },
+  methods: {
+    plus_counter() {
+      this.counter++
+    }
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+#bar {
+  width: 10rem;
+  height: 10rem;
+  background: gray;
 }
 </style>
