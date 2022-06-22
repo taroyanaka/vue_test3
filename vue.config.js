@@ -1,4 +1,4 @@
-// $ npm run build;cp -r ./dist/* ./;rm -r ./dist;git add .;git commit -m "any way commit";git push
+// $ npm run build;cp -r ./dist/* ./;git add .;git commit -m "any way commit";git push
 module.exports = {
     publicPath: './',
     // outputDir: './docs',

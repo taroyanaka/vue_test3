@@ -9,12 +9,12 @@
 export default {
   data() {
     return {
-      counter: 10
+      counter: 2
     }
   },
   methods: {
     plus_counter() {
-      this.counter++
+      this.counter **
     }
   }
 }
