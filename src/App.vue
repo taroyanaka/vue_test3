@@ -9,7 +9,7 @@
 export default {
   data() {
     return {
-      counter: 3
+      counter: 2
     }
   },
   methods: {
