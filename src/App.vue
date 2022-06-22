@@ -14,7 +14,7 @@ export default {
   },
   methods: {
     plus_counter() {
-      this.counter**
+      this.counter++
     }
   }
 }
