@@ -1,54 +1,60 @@
 <template>
-  <button @click="sample(); click_for_initialize();" class="init">init</button>
+<div class="parent">
+<div class="in_zone">
+    <button @click="sample(); click_for_initialize();" class="sample">sample</button>
 
-  <div class="in_zone"></div>
-  <div class="out_zone"></div>
+    <button class="attach_table_name" @click="attach_table_name">attach_table_name</button>
+    <button class="detach_table_name" @click="detach_table_name">detach_table_name</button>
+    <div>
+      <span>a_table: </span><span>{{ table_name_list[a_table] }}</span>
+      <span> active_a_table_index: </span><span>{{ a_table }}</span>
+    </div>
+    <div>
+      <span>b_table: </span><span>{{ table_name_list[b_table] }}</span>
+      <span> active_b_table_index: </span><span>{{ b_table }}</span>
+    </div>
 
-  <button class="attach_table_name" @click="attach_table_name">attach_table_name</button>
-  <button class="detach_table_name" @click="detach_table_name">detach_table_name</button>
-  <div>
-    <span>a_table: </span><span>{{ table_name_list[a_table] }}</span>
-    <span> active_a_table_index: </span><span>{{ a_table }}</span>
+    <select class="select" v-model="selected" @change="set_a_b_table($event)">
+      <option disabled value="">Please select one</option>
+      <option v-for="(table_combination, table_combination_index) in table_all_combination" :key="table_combination">
+        {{ table_combination.name[0] + "+" + table_combination.name[1] }}
+      </option>
+    </select>
+
+
+    <template v-for="(table_column_numbering, table_column_numbering_index) in table_column_numbering_list"
+      :key="table_column_numbering">
+      <input v-model="table_name_list[table_column_numbering]" placeholder="table_name_list[table_column_numbering]"
+        type="text" @input="save" @change="save">
+      <!-- </input> -->
+      <textarea class=''
+        :class="{ a_table: is_a_table(table_column_numbering_index), b_table: is_b_table(table_column_numbering_index) }"
+        v-model="column_names_list[table_column_numbering]" placeholder="column_names_list[table_column_numbering]_one"
+        name="column_names_list[table_column_numbering]" id="column_names_list[table_column_numbering]" cols="30"
+        rows="10" @input="save" @change="save"></textarea>
+    </template>
+    <button class="add_table_column_numbering_list"
+      @click="add_table_column_numbering_list">add_table_column_numbering_list</button>
+
+    <textarea v-model="parameters" placeholder="parameters_one" name="parameters" id="parameters" cols="30" rows="10"
+      @input="save" @change="save"></textarea>
+
   </div>
-  <div>
-    <span>b_table: </span><span>{{ table_name_list[b_table] }}</span>
-    <span> active_b_table_index: </span><span>{{ b_table }}</span>
-  </div>
 
-  <select class="select" v-model="selected" @change="set_a_b_table($event)">
-    <option disabled value="">Please select one</option>
-    <option v-for="(table_combination, table_combination_index) in table_all_combination" :key="table_combination">
-      {{ table_combination.name[0] + "+" + table_combination.name[1] }}
-    </option>
-  </select>
-
-
-  <template v-for="(table_column_numbering, table_column_numbering_index) in table_column_numbering_list"
-    :key="table_column_numbering">
-    <input v-model="table_name_list[table_column_numbering]" placeholder="table_name_list[table_column_numbering]"
-      type="text" @input="save" @change="save">
-    <!-- </input> -->
-    <textarea class=''
-      :class="{ a_table: is_a_table(table_column_numbering_index), b_table: is_b_table(table_column_numbering_index) }"
-      v-model="column_names_list[table_column_numbering]" placeholder="column_names_list[table_column_numbering]_one"
-      name="column_names_list[table_column_numbering]" id="column_names_list[table_column_numbering]" cols="30"
-      rows="10" @input="save" @change="save"></textarea>
-  </template>
-  <button class="add_table_column_numbering_list"
-    @click="add_table_column_numbering_list">add_table_column_numbering_list</button>
-
-  <textarea v-model="parameters" placeholder="parameters_one" name="parameters" id="parameters" cols="30" rows="10"
-    @input="save" @change="save"></textarea>
 
   <!-- <template v-for="FOO in res_list"> -->
   <!-- <template v-for='(item, index) in res_list'> -->
-  <template v-for='(item, key, index) in res_list'>
-    <textarea v-model='res_list[key]' placeholder="res" name="res" id="res" cols="30" rows="10" @input="save"
-      @change="save"></textarea>
-  </template>
+  <div class="out_zone">
+    <template v-for='(item, key, index) in res_list'>
+      <textarea v-model='res_list[key]' placeholder="res" name="res" id="res" cols="30" rows="10" @input="save"
+        @change="save"></textarea>
+    </template>
 
-  <textarea v-model="res_all" placeholder="res_all" name="res_all" id="res_all" cols="30" rows="10" @input="save"
-    @change="save"></textarea>
+    <textarea v-model="res_all" placeholder="res_all" name="res_all" id="res_all" cols="30" rows="10" @input="save"
+      @change="save"></textarea>
+  </div>
+
+</div>
 </template>
 
 
@@ -155,9 +161,9 @@ const template_key_and_empty_string_object = Object.keys(template).reduce((a, v)
 
 // https://ramdajs.com/repl/?v=0.28.0#?%2F%2FR.xprod%28%5B1%2C%202%5D%2C%20%5B1%2C%202%5D%29%3B%20%2F%2F%3D%3E%20%5B%5B1%2C%201%5D%2C%20%5B1%2C%202%5D%2C%20%5B2%2C%201%5D%2C%20%5B2%2C%202%5D%5D%0AR.xprod%28%5B1%2C%202%2C%203%5D%2C%20%5B1%2C%202%2C%203%5D%29.filter%28V%3D%3E%20V%5B0%5D%20%21%3D%3D%20V%5B1%5D%29%3B%20%2F%2F%3D%3E%20%5B%5B1%2C%202%5D%2C%20%5B1%2C%203%5D%2C%20%5B2%2C%201%5D%2C%20%5B2%2C%203%5D%2C%20%5B3%2C%201%5D%2C%20%5B3%2C%202%5D%5D
 // xprod([1, 2, 3], [1, 2, 3]).filter(V=> V[0] !== V[1]); // => [[1, 2],[1, 3],[2, 1],[2, 3],[3, 1],[3, 2]]
-function xprod(a, b) { return a.reduce((A, aV, aIDX) => { const RESULT = b.reduce((B, bV) => { B.push([a[aIDX], bV]); return B }, B = []); A.push(...RESULT); return A }, A = []) };
+// function xprod(a, b) { return a.reduce((A, aV, aIDX) => { const RESULT = b.reduce((B, bV) => { B.push([a[aIDX], bV]); return B }, B = []); A.push(...RESULT); return A }, A = []) };
 // range(0, 3) => [0, 1, 2]
-function range(from, to) { return [...Array(to - from)].reduce((A, V, IDX) => { A.push(from + IDX); return A }, A = []) };
+// function range(from, to) { return [...Array(to - from)].reduce((A, V, IDX) => { A.push(from + IDX); return A }, A = []) };
 
 export default {
   data() {
@@ -186,7 +192,7 @@ export default {
 
       // console.table(template);
       // console.table(template["insert"]);
-      this.debug();
+      // this.debug();
       this.res_list.insert = this.replace_statement_string(template["insert"], this.table_name_list[this.a_table], this.column_names_list[this.a_table], this.parameters);
 
       this.res_list.update = this.replace_statement_string(template["update"], this.table_name_list[this.a_table], this.column_names_list[this.a_table], this.parameters);
@@ -220,21 +226,30 @@ export default {
       return Object.keys(vue_data_list).map(key => vue_data_list[key]);
     },
     choose_table_cobination() {
-      console.log("FOO")
+      // function range(from, to) { return [...Array(to - from)].reduce((A, V, IDX) => { A.push(from + IDX); return A }, A = []) };
+      // console.table(this.table_name_list);
+      // console.table(range(0, this.table_name_list.length));
+      // console.table(Array.from(Array(this.table_name_list.length), (v, k) => k) );
       try {
-        const table_name_list_index_list = range(0, this.table_name_list.length);
-        let list = xprod(
+        const table_name_list_index_list = R.range(0, this.table_name_list.length);
+        // const table_name_list_index_list = Array.from(Array(this.table_name_list.length), (v, k) => k);
+        let list = R.xprod(
           this.vue_map(table_name_list_index_list),
           this.vue_map(table_name_list_index_list)
         )
-          .filter(V => V[0] !== V[1])
+        .filter(V => V[0] !== V[1])
+        // console.log(table_name_list_index_list);
+        // console.log(list);
         const obj_list = list.map(VAL => {
           let obj = {};
           Object.assign(obj, { name: [VAL[0], VAL[1]] });
           return obj;
         });
+        // console.log(obj_list);
         this.table_all_combination = obj_list;
+        // this.debug();
       } catch (error) {
+        console.log(error);
         return null
       }
     },
@@ -320,46 +335,168 @@ PARAM3`;
   </script>
 
   <style>
-    textarea {
-      width: 20rem;
-      height: 15rem;
-    }
-
-    textarea.a_table {
-      background-color: pink;
-    }
-
-    textarea.b_table {
-      background-color: greenyellow;
-    }
-  </style>
-
-  <!-- <template>
-  <h1 id="bar" @click="plus_counter">BAR</h1>
-  <button @click="plus_counter">ABC</button>
-  <div>
-    {{ counter }}
-  </div>
-</template>
-<script>
-export default {
-  data() {
-    return {
-      counter: 2
-    }
-  },
-  methods: {
-    plus_counter() {
-      this.counter++
-    }
+  /* http://meyerweb.com/eric/tools/css/reset/ 
+     v2.0 | 20110126
+     License: none (public domain)
+  */
+  
+  html,
+  body,
+  div,
+  span,
+  applet,
+  object,
+  iframe,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  blockquote,
+  pre,
+  a,
+  abbr,
+  acronym,
+  address,
+  big,
+  cite,
+  code,
+  del,
+  dfn,
+  em,
+  img,
+  ins,
+  kbd,
+  q,
+  s,
+  samp,
+  small,
+  strike,
+  strong,
+  sub,
+  sup,
+  tt,
+  var,
+  b,
+  u,
+  i,
+  center,
+  dl,
+  dt,
+  dd,
+  ol,
+  ul,
+  li,
+  fieldset,
+  form,
+  label,
+  legend,
+  table,
+  caption,
+  tbody,
+  tfoot,
+  thead,
+  tr,
+  th,
+  td,
+  article,
+  aside,
+  canvas,
+  details,
+  embed,
+  figure,
+  figcaption,
+  footer,
+  header,
+  hgroup,
+  menu,
+  nav,
+  output,
+  ruby,
+  section,
+  summary,
+  time,
+  mark,
+  audio,
+  video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
   }
-}
-</script>
-
-<style>
-#bar {
-  width: 10rem;
-  height: 10rem;
-  background: gray;
-}
-</style> -->
+  
+  /* HTML5 display-role reset for older browsers */
+  article,
+  aside,
+  details,
+  figcaption,
+  figure,
+  footer,
+  header,
+  hgroup,
+  menu,
+  nav,
+  section {
+    display: block;
+  }
+  
+  body {
+    line-height: 1;
+  }
+  
+  ol,
+  ul {
+    list-style: none;
+  }
+  
+  blockquote,
+  q {
+    quotes: none;
+  }
+  
+  blockquote:before,
+  blockquote:after,
+  q:before,
+  q:after {
+    content: '';
+    content: none;
+  }
+  
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+  
+  /* grid_layout */
+  .parent {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+  }
+  .in_zone {
+    grid-column: 1 / 6;
+    grid-row: 1 / 11;
+    background-color: gray;
+  }
+  .out_zone {
+    grid-column: 6 / 11;
+    grid-row: 1 / 11;
+    background-color: darkgray;
+  }
+  textarea {
+    width: 20rem;
+    height: 15rem;
+  }
+  
+  textarea.a_table {
+    background-color: pink;
+  }
+  
+  textarea.b_table {
+    background-color: greenyellow;
+  }
+  </style>
