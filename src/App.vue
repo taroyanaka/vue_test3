@@ -206,6 +206,21 @@ export default {
       this.res_list.select_cross_table = a_b_table_string_replace(template["select_cross_table"], "!!!A_TABLE!!!", "!!!B_TABLE!!!", this.table_name_list[this.a_table], this.table_name_list[this.b_table], "!!!CROSS_TABLE!!!", this.table_name_list[this.a_table] + "_" + this.table_name_list[this.b_table]);
 
       Object.entries(this.res_list).forEach(([key, value]) => this.res_all += value + "\n\n");
+
+      // if (x == "") throw "empty";
+// R.tryCatch(() => { throw 'this is not a valid value' },
+//   (err, value) => ({ error: err, value }))('bar')
+      let FOO = "FOO";
+      FOO = "";
+
+      const TR_RES = R.tryCatch(() => {
+        if (FOO == "FOO") throw "FOOFOO";
+        if (FOO == "") throw "empty";  
+ },
+  (err, value) => ({ error: err, value }))('bar')
+// => {'error': 'this is not a valid value', 'value': 'bar'}
+      console.table(TR_RES);
+
       try {
         this.choose_table_cobination();
       } catch (error) {
