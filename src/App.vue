@@ -1,66 +1,78 @@
 <template>
-<div class="parent">
-<div class="in_zone">
-    <button @click="sample(); click_for_initialize();" class="sample">sample</button>
+  <div class="parent">
+    <div class="in_zone">
+      <template v-for='(obj, key, index) in template_data'>
+        <!-- <div v-model='res_list[key]'>{{ }}</div> -->
+        <div>{{ key }}</div>
+      </template>
 
-    <button class="attach_table_name" @click="attach_table_name">attach_table_name</button>
-    <button class="detach_table_name" @click="detach_table_name">detach_table_name</button>
-    <div>
-      <span>a_table: </span><span>{{ table_name_list[a_table] }}</span>
-      <span> active_a_table_index: </span><span>{{ a_table }}</span>
+      <button @click="foo">foo_click</button>
+      <input v-model="template_key_data" placeholder="template_key" name="template_key" id="template_key">
+      <textarea v-model="template_value_data" placeholder="template_value_data" name="foo" id="foo" cols="30"
+        rows="10"></textarea>
+      <textarea v-model="template_result_data" placeholder="template_result_data" name="foo" id="foo" cols="30"
+        rows="10"></textarea>
+
+      <button @click="sample(); click_for_initialize();" class="sample">sample</button>
+
+      <button class="attach_table_name" @click="attach_table_name">attach_table_name</button>
+      <button class="detach_table_name" @click="detach_table_name">detach_table_name</button>
+      <div>
+        <span>a_table: </span><span>{{ table_name_list[a_table] }}</span>
+        <span> active_a_table_index: </span><span>{{ a_table }}</span>
+      </div>
+      <div>
+        <span>b_table: </span><span>{{ table_name_list[b_table] }}</span>
+        <span> active_b_table_index: </span><span>{{ b_table }}</span>
+      </div>
+
+      <select class="select" v-model="selected" @change="set_a_b_table($event)">
+        <option disabled value="">Please select one</option>
+        <option v-for="(table_combination, table_combination_index) in table_all_combination" :key="table_combination">
+          {{ table_combination.name[0] + "+" + table_combination.name[1] }}
+        </option>
+      </select>
+
+
+      <template v-for="(table_column_numbering, table_column_numbering_index) in table_column_numbering_list"
+        :key="table_column_numbering">
+        <input v-model="table_name_list[table_column_numbering]" placeholder="table_name_list[table_column_numbering]"
+          type="text" @input="save" @change="save">
+        <!-- </input> -->
+        <textarea class=''
+          :class="{ a_table: is_a_table(table_column_numbering_index), b_table: is_b_table(table_column_numbering_index) }"
+          v-model="column_names_list[table_column_numbering]"
+          placeholder="column_names_list[table_column_numbering]_one" name="column_names_list[table_column_numbering]"
+          id="column_names_list[table_column_numbering]" cols="30" rows="10" @input="save" @change="save"></textarea>
+      </template>
+      <button class="add_table_column_numbering_list"
+        @click="add_table_column_numbering_list">add_table_column_numbering_list</button>
+
+      <textarea v-model="parameters" placeholder="parameters_one" name="parameters" id="parameters" cols="30" rows="10"
+        @input="save" @change="save"></textarea>
+
     </div>
-    <div>
-      <span>b_table: </span><span>{{ table_name_list[b_table] }}</span>
-      <span> active_b_table_index: </span><span>{{ b_table }}</span>
-    </div>
-
-    <select class="select" v-model="selected" @change="set_a_b_table($event)">
-      <option disabled value="">Please select one</option>
-      <option v-for="(table_combination, table_combination_index) in table_all_combination" :key="table_combination">
-        {{ table_combination.name[0] + "+" + table_combination.name[1] }}
-      </option>
-    </select>
 
 
-    <template v-for="(table_column_numbering, table_column_numbering_index) in table_column_numbering_list"
-      :key="table_column_numbering">
-      <input v-model="table_name_list[table_column_numbering]" placeholder="table_name_list[table_column_numbering]"
-        type="text" @input="save" @change="save">
-      <!-- </input> -->
-      <textarea class=''
-        :class="{ a_table: is_a_table(table_column_numbering_index), b_table: is_b_table(table_column_numbering_index) }"
-        v-model="column_names_list[table_column_numbering]" placeholder="column_names_list[table_column_numbering]_one"
-        name="column_names_list[table_column_numbering]" id="column_names_list[table_column_numbering]" cols="30"
-        rows="10" @input="save" @change="save"></textarea>
-    </template>
-    <button class="add_table_column_numbering_list"
-      @click="add_table_column_numbering_list">add_table_column_numbering_list</button>
+    <!-- <template v-for="FOO in res_list"> -->
+    <!-- <template v-for='(item, index) in res_list'> -->
+    <div class="out_zone">
+      <template v-for='(item, key, index) in res_list'>
+        <textarea v-model='res_list[key]' placeholder="res" name="res" id="res" cols="30" rows="10" @input="save"
+          @change="save"></textarea>
+      </template>
 
-    <textarea v-model="parameters" placeholder="parameters_one" name="parameters" id="parameters" cols="30" rows="10"
-      @input="save" @change="save"></textarea>
-
-  </div>
-
-
-  <!-- <template v-for="FOO in res_list"> -->
-  <!-- <template v-for='(item, index) in res_list'> -->
-  <div class="out_zone">
-    <template v-for='(item, key, index) in res_list'>
-      <textarea v-model='res_list[key]' placeholder="res" name="res" id="res" cols="30" rows="10" @input="save"
+      <textarea v-model="res_all" placeholder="res_all" name="res_all" id="res_all" cols="30" rows="10" @input="save"
         @change="save"></textarea>
-    </template>
+    </div>
 
-    <textarea v-model="res_all" placeholder="res_all" name="res_all" id="res_all" cols="30" rows="10" @input="save"
-      @change="save"></textarea>
   </div>
-
-</div>
 </template>
 
 
   <script>
     // https://stackoverflow.com/questions/49689312/how-to-add-rows-based-on-multiple-selection-options-in-html-vue-js
-const template = {
+let template = {
 select: `const SELECT = () => {
     try {
         return db.prepare('SELECT rowid, * FROM !!!THIS_IS_CHANGEABLE_TABLE_NAME!!!').all();
@@ -170,6 +182,7 @@ export default {
 // const make_better_sqlite3_code = Vue.createApp({
 //   data() {
     return {
+      template_data: template,
       a_table: 0,
       b_table: 1,
       res_list: template_key_and_empty_string_object,
@@ -184,17 +197,44 @@ export default {
       res: null,
       selected: null,
       table_column_numbering_list: [],
+      template_key_data: 'template_key',
+      template_value_data: `const FOO_METHOD = (!!!THIS_IS_CHANGEABLE_VALUES_PARAMETERS!!!) => {
+try {
+  return db.prepare('INSERT INTO !!!THIS_IS_CHANGEABLE_TABLE_NAME!!! ( !!!THIS_IS_CHANGEABLE_COLUMN_NAMES!!! ) VALUES ( !!!THIS_IS_CHANGEABLE_COUPLE_OF_QUESTION_SYMBOLS!!! )').run( !!!THIS_IS_CHANGEABLE_VALUES_PARAMETERS!!! );
+} catch (ERROR) {
+  return ERROR;
+}
+};`,
+      template_result_data: '',
     }
   },
   methods: {
+    foo() {
+      // https://stackoverflow.com/a/11508490
+      var key = this.template_key_data;
+      var obj = {};
+
+      obj[key] = this.template_value_data;
+      // const key = this.template_key_data;
+      // template = Object.assign(template, { `${key}` : 'Feb' });
+      this.template_data = Object.assign(template, obj);
+
+      // this.template_data.splice(0, 0, { month: 'Feb' });
+      this.template_result_data = this.template_data[key];
+      console.table(this.template_data);
+      // this.foo_data =  template['insert']
+    },
+    template_list_rendering() {
+      Object.entries(this.template_data).forEach(([key, value]) => {
+        this.res_list[key] = this.replace_statement_string(template[key], this.table_name_list[this.a_table], this.column_names_list[this.a_table], this.parameters);
+      });
+    },
     save() {
       this.res_list.select = replace_string(template["select"], "!!!THIS_IS_CHANGEABLE_TABLE_NAME!!!", this.table_name_list[this.a_table]);
-
       // console.table(template);
       // console.table(template["insert"]);
       // this.debug();
       this.res_list.insert = this.replace_statement_string(template["insert"], this.table_name_list[this.a_table], this.column_names_list[this.a_table], this.parameters);
-
       this.res_list.update = this.replace_statement_string(template["update"], this.table_name_list[this.a_table], this.column_names_list[this.a_table], this.parameters);
       this.res_list.delete = this.replace_statement_string(template["delete"], this.table_name_list[this.a_table], this.column_names_list[this.a_table], this.parameters);
       this.res_list.create = this.replace_statement_string(template["create"], this.table_name_list[this.a_table], this.column_names_list[this.a_table], this.parameters);
@@ -207,19 +247,6 @@ export default {
 
       Object.entries(this.res_list).forEach(([key, value]) => this.res_all += value + "\n\n");
 
-      // if (x == "") throw "empty";
-// R.tryCatch(() => { throw 'this is not a valid value' },
-//   (err, value) => ({ error: err, value }))('bar')
-      let FOO = "FOO";
-      FOO = "";
-
-      const TR_RES = R.tryCatch(() => {
-        if (FOO == "FOO") throw "FOOFOO";
-        if (FOO == "") throw "empty";  
- },
-  (err, value) => ({ error: err, value }))('bar')
-// => {'error': 'this is not a valid value', 'value': 'bar'}
-      console.table(TR_RES);
 
       try {
         this.choose_table_cobination();
@@ -350,142 +377,6 @@ PARAM3`;
   </script>
 
   <style>
-  /* http://meyerweb.com/eric/tools/css/reset/ 
-     v2.0 | 20110126
-     License: none (public domain)
-  */
-  
-  html,
-  body,
-  div,
-  span,
-  applet,
-  object,
-  iframe,
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  p,
-  blockquote,
-  pre,
-  a,
-  abbr,
-  acronym,
-  address,
-  big,
-  cite,
-  code,
-  del,
-  dfn,
-  em,
-  img,
-  ins,
-  kbd,
-  q,
-  s,
-  samp,
-  small,
-  strike,
-  strong,
-  sub,
-  sup,
-  tt,
-  var,
-  b,
-  u,
-  i,
-  center,
-  dl,
-  dt,
-  dd,
-  ol,
-  ul,
-  li,
-  fieldset,
-  form,
-  label,
-  legend,
-  table,
-  caption,
-  tbody,
-  tfoot,
-  thead,
-  tr,
-  th,
-  td,
-  article,
-  aside,
-  canvas,
-  details,
-  embed,
-  figure,
-  figcaption,
-  footer,
-  header,
-  hgroup,
-  menu,
-  nav,
-  output,
-  ruby,
-  section,
-  summary,
-  time,
-  mark,
-  audio,
-  video {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font-size: 100%;
-    font: inherit;
-    vertical-align: baseline;
-  }
-  
-  /* HTML5 display-role reset for older browsers */
-  article,
-  aside,
-  details,
-  figcaption,
-  figure,
-  footer,
-  header,
-  hgroup,
-  menu,
-  nav,
-  section {
-    display: block;
-  }
-  
-  body {
-    line-height: 1;
-  }
-  
-  ol,
-  ul {
-    list-style: none;
-  }
-  
-  blockquote,
-  q {
-    quotes: none;
-  }
-  
-  blockquote:before,
-  blockquote:after,
-  q:before,
-  q:after {
-    content: '';
-    content: none;
-  }
-  
-  table {
-    border-collapse: collapse;
-    border-spacing: 0;
-  }
-  
   /* grid_layout */
   .parent {
     display: grid;
