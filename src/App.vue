@@ -2,7 +2,6 @@
   <div class="parent">
     <div class="in_zone">
       <template v-for='(obj, key, index) in template_data'>
-        <!-- <div v-model='res_list[key]'>{{ }}</div> -->
         <div>{{ key }}</div>
       </template>
 
@@ -71,37 +70,37 @@
 
 
   <script>
-    // https://stackoverflow.com/questions/49689312/how-to-add-rows-based-on-multiple-selection-options-in-html-vue-js
+// https://stackoverflow.com/questions/49689312/how-to-add-rows-based-on-multiple-selection-options-in-html-vue-js
 let template = {
 select: `const SELECT = () => {
     try {
-        return db.prepare('SELECT rowid, * FROM !!!THIS_IS_CHANGEABLE_TABLE_NAME!!!').all();
+        return db.prepare('SELECT rowid, * FROM !!!A_TABLE!!!').all();
     } catch (ERROR) {
         return ERROR;
     }
 };`,
 insert: `const INSERT = (!!!THIS_IS_CHANGEABLE_VALUES_PARAMETERS!!!) => {
     try {
-        return db.prepare('INSERT INTO !!!THIS_IS_CHANGEABLE_TABLE_NAME!!! ( !!!THIS_IS_CHANGEABLE_COLUMN_NAMES!!! ) VALUES ( !!!THIS_IS_CHANGEABLE_COUPLE_OF_QUESTION_SYMBOLS!!! )').run( !!!THIS_IS_CHANGEABLE_VALUES_PARAMETERS!!! );
+        return db.prepare('INSERT INTO !!!A_TABLE!!! ( !!!THIS_IS_CHANGEABLE_COLUMN_NAMES!!! ) VALUES ( !!!THIS_IS_CHANGEABLE_COUPLE_OF_QUESTION_SYMBOLS!!! )').run( !!!THIS_IS_CHANGEABLE_VALUES_PARAMETERS!!! );
     } catch (ERROR) {
         return ERROR;
     }
 };`,
 update: `const UPDATE = (!!!THIS_IS_CHANGEABLE_VALUES_PARAMETERS!!!) => {
     try {
-        return db.prepare('UPDATE !!!THIS_IS_CHANGEABLE_TABLE_NAME!!! SET !!!THIS_IS_CHANGEABLE_COLUMN_NAMES!!!').run( !!!THIS_IS_CHANGEABLE_VALUES_PARAMETERS!!! );
+        return db.prepare('UPDATE !!!A_TABLE!!! SET !!!THIS_IS_CHANGEABLE_COLUMN_NAMES!!!').run( !!!THIS_IS_CHANGEABLE_VALUES_PARAMETERS!!! );
     } catch (ERROR) {
         return ERROR;
     }
 };`,
 delete: `const DELETE = (!!!THIS_IS_CHANGEABLE_VALUES_PARAMETERS!!!) => {
     try {
-        return db.prepare('DELETE FROM !!!THIS_IS_CHANGEABLE_TABLE_NAME!!! WHERE !!!THIS_IS_CHANGEABLE_COLUMN_NAMES!!! = ?').run( !!!THIS_IS_CHANGEABLE_VALUES_PARAMETERS!!! );
+        return db.prepare('DELETE FROM !!!A_TABLE!!! WHERE !!!THIS_IS_CHANGEABLE_COLUMN_NAMES!!! = ?').run( !!!THIS_IS_CHANGEABLE_VALUES_PARAMETERS!!! );
     } catch (ERROR) {
         return ERROR;
     }
 };`,
-create: `const CREATE = () => CREATE TABLE IF NOT EXISTS !!!THIS_IS_CHANGEABLE_TABLE_NAME!!! (
+create: `const CREATE = () => CREATE TABLE IF NOT EXISTS !!!A_TABLE!!! (
 !!!THIS_IS_CHANGEABLE_COLUMN_NAMES!!!
 // I recommend GitHub Copilot writing the SQLite3 code for you. like this,
 // vue_instance.$data copy & paste
@@ -120,7 +119,7 @@ create: `const CREATE = () => CREATE TABLE IF NOT EXISTS !!!THIS_IS_CHANGEABLE_T
 // );
 );`,
   drop: `const DROP = () => {
-    db.prepare("DROP TABLE !!!THIS_IS_CHANGEABLE_TABLE_NAME!!! ").run();
+    db.prepare("DROP TABLE !!!A_TABLE!!! ").run();
 };`,
   create_cross_table: `const CREATE_!!!CROSS_TABLE!!! = () => {
     try {
@@ -162,25 +161,11 @@ JOIN !!!B_TABLE!!!
 };`,
 };
 
-const new_lined_string_to_join_comma_string = (new_lined_string) => new_lined_string.split("\n").join(", ");
-const new_lined_string_to_join_comma_string_with_table_name = (table_name, new_lined_string) => new_lined_string.split("\n").map(V => table_name + "." + V).join(", ");
-const new_lined_string_to_question_symbol_comma_string = (new_lined_string) => new_lined_string.split("\n").map(V => "?").join(", ");
-const replace_string = (STR, FROM, TO) => STR.replaceAll(FROM, TO);
-const a_b_table_string_replace = (STR, A_TABLE_FROM, B_TABLE_FROM, A_TABLE_TO, B_TABLE_TO, CROSS_TABLE_FROM, CROSS_TABLE_TO) => STR.replaceAll(A_TABLE_FROM, A_TABLE_TO).replaceAll(B_TABLE_FROM, B_TABLE_TO).replaceAll(CROSS_TABLE_FROM, CROSS_TABLE_TO);
-
 // https://stackoverflow.com/a/36388401
 const template_key_and_empty_string_object = Object.keys(template).reduce((a, v) => ({ ...a, [v]: '' }), {});
 
-// https://ramdajs.com/repl/?v=0.28.0#?%2F%2FR.xprod%28%5B1%2C%202%5D%2C%20%5B1%2C%202%5D%29%3B%20%2F%2F%3D%3E%20%5B%5B1%2C%201%5D%2C%20%5B1%2C%202%5D%2C%20%5B2%2C%201%5D%2C%20%5B2%2C%202%5D%5D%0AR.xprod%28%5B1%2C%202%2C%203%5D%2C%20%5B1%2C%202%2C%203%5D%29.filter%28V%3D%3E%20V%5B0%5D%20%21%3D%3D%20V%5B1%5D%29%3B%20%2F%2F%3D%3E%20%5B%5B1%2C%202%5D%2C%20%5B1%2C%203%5D%2C%20%5B2%2C%201%5D%2C%20%5B2%2C%203%5D%2C%20%5B3%2C%201%5D%2C%20%5B3%2C%202%5D%5D
-// xprod([1, 2, 3], [1, 2, 3]).filter(V=> V[0] !== V[1]); // => [[1, 2],[1, 3],[2, 1],[2, 3],[3, 1],[3, 2]]
-// function xprod(a, b) { return a.reduce((A, aV, aIDX) => { const RESULT = b.reduce((B, bV) => { B.push([a[aIDX], bV]); return B }, B = []); A.push(...RESULT); return A }, A = []) };
-// range(0, 3) => [0, 1, 2]
-// function range(from, to) { return [...Array(to - from)].reduce((A, V, IDX) => { A.push(from + IDX); return A }, A = []) };
-
 export default {
   data() {
-// const make_better_sqlite3_code = Vue.createApp({
-//   data() {
     return {
       template_data: template,
       a_table: 0,
@@ -200,7 +185,7 @@ export default {
       template_key_data: 'template_key',
       template_value_data: `const FOO_METHOD = (!!!THIS_IS_CHANGEABLE_VALUES_PARAMETERS!!!) => {
 try {
-  return db.prepare('INSERT INTO !!!THIS_IS_CHANGEABLE_TABLE_NAME!!! ( !!!THIS_IS_CHANGEABLE_COLUMN_NAMES!!! ) VALUES ( !!!THIS_IS_CHANGEABLE_COUPLE_OF_QUESTION_SYMBOLS!!! )').run( !!!THIS_IS_CHANGEABLE_VALUES_PARAMETERS!!! );
+  return db.prepare('INSERT INTO !!!A_TABLE!!! ( !!!THIS_IS_CHANGEABLE_COLUMN_NAMES!!! ) VALUES ( !!!THIS_IS_CHANGEABLE_COUPLE_OF_QUESTION_SYMBOLS!!! )').run( !!!THIS_IS_CHANGEABLE_VALUES_PARAMETERS!!! );
 } catch (ERROR) {
   return ERROR;
 }
@@ -211,42 +196,32 @@ try {
   methods: {
     foo() {
       // https://stackoverflow.com/a/11508490
-      var key = this.template_key_data;
-      var obj = {};
-
+      const key = this.template_key_data;
+      let obj = {};
       obj[key] = this.template_value_data;
-      // const key = this.template_key_data;
-      // template = Object.assign(template, { `${key}` : 'Feb' });
       this.template_data = Object.assign(template, obj);
-
-      // this.template_data.splice(0, 0, { month: 'Feb' });
       this.template_result_data = this.template_data[key];
-      console.table(this.template_data);
-      // this.foo_data =  template['insert']
     },
     template_list_rendering() {
       Object.entries(this.template_data).forEach(([key, value]) => {
-        this.res_list[key] = this.replace_statement_string(template[key], this.table_name_list[this.a_table], this.column_names_list[this.a_table], this.parameters);
-      });
+        this.res_list[key] = this.replace_statement_string(
+          template[key],
+          this.table_name_list[this.a_table],
+          this.column_names_list[this.a_table],
+          this.parameters,
+          // these extra parameters for B_TABLE
+          "!!!B_TABLE!!!",
+          this.table_name_list[this.a_table],
+          this.table_name_list[this.b_table],
+          "!!!CROSS_TABLE!!!",
+          this.table_name_list[this.a_table] + "_" + this.table_name_list[this.b_table]
+        );
+      })
     },
     save() {
-      this.res_list.select = replace_string(template["select"], "!!!THIS_IS_CHANGEABLE_TABLE_NAME!!!", this.table_name_list[this.a_table]);
-      // console.table(template);
-      // console.table(template["insert"]);
-      // this.debug();
-      this.res_list.insert = this.replace_statement_string(template["insert"], this.table_name_list[this.a_table], this.column_names_list[this.a_table], this.parameters);
-      this.res_list.update = this.replace_statement_string(template["update"], this.table_name_list[this.a_table], this.column_names_list[this.a_table], this.parameters);
-      this.res_list.delete = this.replace_statement_string(template["delete"], this.table_name_list[this.a_table], this.column_names_list[this.a_table], this.parameters);
-      this.res_list.create = this.replace_statement_string(template["create"], this.table_name_list[this.a_table], this.column_names_list[this.a_table], this.parameters);
-      this.res_list.drop = this.replace_statement_string(template["drop"], this.table_name_list[this.a_table], this.column_names_list[this.a_table], this.parameters);
-      this.res_all = '';
-
-      this.res_list.create_cross_table = a_b_table_string_replace(template["create_cross_table"], "!!!A_TABLE!!!", "!!!B_TABLE!!!", this.table_name_list[this.a_table], this.table_name_list[this.b_table], "!!!CROSS_TABLE!!!", this.table_name_list[this.a_table] + "_" + this.table_name_list[this.b_table]);
-      this.res_list.select_table_join = a_b_table_string_replace(template["select_table_join"], "!!!A_TABLE!!!", "!!!B_TABLE!!!", this.table_name_list[this.a_table], this.table_name_list[this.b_table], "!!!CROSS_TABLE!!!", this.table_name_list[this.a_table] + "_" + this.table_name_list[this.b_table]);
-      this.res_list.select_cross_table = a_b_table_string_replace(template["select_cross_table"], "!!!A_TABLE!!!", "!!!B_TABLE!!!", this.table_name_list[this.a_table], this.table_name_list[this.b_table], "!!!CROSS_TABLE!!!", this.table_name_list[this.a_table] + "_" + this.table_name_list[this.b_table]);
-
+      this.res_list.select = template["select"].replaceAll("!!!THIS_IS_CHANGEABLE_TABLE_NAME!!!", this.table_name_list[this.a_table]);
+      this.template_list_rendering();
       Object.entries(this.res_list).forEach(([key, value]) => this.res_all += value + "\n\n");
-
 
       try {
         this.choose_table_cobination();
@@ -254,42 +229,43 @@ try {
         console.log(error);
       }
     },
-    replace_statement_string(TEMPLATE_STR, TABLE_NAME, COLUMN_NAMES, PARAMETERS) {
+    replace_statement_string(TEMPLATE_STR, TABLE_NAME, COLUMN_NAMES, PARAMETERS, B_TABLE_FROM, A_TABLE_TO, B_TABLE_TO, CROSS_TABLE_FROM, CROSS_TABLE_TO) {
       let tmp = '';
-      tmp = replace_string(TEMPLATE_STR, "!!!THIS_IS_CHANGEABLE_TABLE_NAME!!!", TABLE_NAME);
-      tmp = replace_string(tmp, "!!!THIS_IS_CHANGEABLE_COLUMN_NAMES!!!",
-        // this.check ? new_lined_string_to_join_comma_string_with_table_name(TABLE_NAME, COLUMN_NAMES) :
-        new_lined_string_to_join_comma_string(COLUMN_NAMES));
-      tmp = replace_string(tmp, "!!!THIS_IS_CHANGEABLE_COUPLE_OF_QUESTION_SYMBOLS!!!", new_lined_string_to_question_symbol_comma_string(COLUMN_NAMES));
-      tmp = replace_string(tmp, "!!!THIS_IS_CHANGEABLE_VALUES_PARAMETERS!!!", new_lined_string_to_join_comma_string(PARAMETERS));
+
+      // only A_TABLE
+      tmp = TEMPLATE_STR.replaceAll("!!!A_TABLE!!!", TABLE_NAME);
+      const new_lined_string_to_join_comma_string = (new_lined_string) => new_lined_string.split("\n").join(", ");
+      tmp = tmp.replaceAll("!!!THIS_IS_CHANGEABLE_COLUMN_NAMES!!!", new_lined_string_to_join_comma_string(COLUMN_NAMES));
+      const new_lined_string_to_question_symbol_comma_string = (new_lined_string) => new_lined_string.split("\n").map(V => "?").join(", ");
+      tmp = tmp.replaceAll("!!!THIS_IS_CHANGEABLE_COUPLE_OF_QUESTION_SYMBOLS!!!", new_lined_string_to_question_symbol_comma_string(COLUMN_NAMES));
+      tmp = tmp.replaceAll("!!!THIS_IS_CHANGEABLE_VALUES_PARAMETERS!!!", new_lined_string_to_join_comma_string(PARAMETERS));
+
+      // A_TABLE with B_TABLE
+      tmp = arguments.length >= 5 ? tmp
+          .replaceAll(TABLE_NAME, A_TABLE_TO)
+          .replaceAll(B_TABLE_FROM, B_TABLE_TO)
+          .replaceAll(CROSS_TABLE_FROM, CROSS_TABLE_TO)
+        : tmp;
+
       return tmp;
     },
     vue_map(vue_data_list) {
       return Object.keys(vue_data_list).map(key => vue_data_list[key]);
     },
     choose_table_cobination() {
-      // function range(from, to) { return [...Array(to - from)].reduce((A, V, IDX) => { A.push(from + IDX); return A }, A = []) };
-      // console.table(this.table_name_list);
-      // console.table(range(0, this.table_name_list.length));
-      // console.table(Array.from(Array(this.table_name_list.length), (v, k) => k) );
       try {
         const table_name_list_index_list = R.range(0, this.table_name_list.length);
-        // const table_name_list_index_list = Array.from(Array(this.table_name_list.length), (v, k) => k);
         let list = R.xprod(
           this.vue_map(table_name_list_index_list),
           this.vue_map(table_name_list_index_list)
         )
         .filter(V => V[0] !== V[1])
-        // console.log(table_name_list_index_list);
-        // console.log(list);
         const obj_list = list.map(VAL => {
           let obj = {};
           Object.assign(obj, { name: [VAL[0], VAL[1]] });
           return obj;
         });
-        // console.log(obj_list);
         this.table_all_combination = obj_list;
-        // this.debug();
       } catch (error) {
         console.log(error);
         return null
@@ -344,16 +320,9 @@ PARAM3`;
       return table_column_numbering_index === this.a_table ? true : '';
     },
     is_b_table(table_column_numbering_index) {
-      // let res = null;
       return table_column_numbering_index === this.b_table ? true : '';
     },
     attach_table_name() {
-      // this.debug();
-      // let res = [];
-      // this.column_names_list.forEach((V,INDEX)=>{
-      //     res.push(V.split("\n").map(VAL=>"hogehoge" + VAL).join("\n"))
-      // })
-      // this.column_names_list = res;
       this.column_names_list = this.vue_map(this.column_names_list)
         .map((column_names, INDEX) =>
           column_names.split("\n")
@@ -371,10 +340,7 @@ PARAM3`;
     },
   },
 }
-// .mount('.make_better_sqlite3_code');
-// make_better_sqlite3_code.sample();
-// make_better_sqlite3_code.click_for_initialize();
-  </script>
+</script>
 
   <style>
   /* grid_layout */
