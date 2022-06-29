@@ -76,6 +76,13 @@ const replacer_methods = {
     "new_lined_string_to_question_symbol_comma_string": new_lined_string_to_question_symbol_comma_string,
 };
 
+const replace_table = [
+    ["!!!A_TABLE!!!", "just_replace", "TABLE_NAME"],
+    ["!!!THIS_IS_CHANGEABLE_COLUMN_NAMES!!!", "new_lined_string_to_join_comma_string", "COLUMN_NAMES"],
+    ["!!!THIS_IS_CHANGEABLE_COUPLE_OF_QUESTION_SYMBOLS!!!", "new_lined_string_to_question_symbol_comma_string", "COLUMN_NAMES"],
+    ["!!!THIS_IS_CHANGEABLE_VALUES_PARAMETERS!!!", "new_lined_string_to_question_symbol_comma_string", "PARAMETERS"],
+];
+
 // https://stackoverflow.com/questions/49689312/how-to-add-rows-based-on-multiple-selection-options-in-html-vue-js
 let template = {
 select: `const SELECT = () => {
@@ -197,7 +204,8 @@ return ERROR;
 }
 };`,
 template_result_data: '',
-replacer_methods_data: replacer_methods
+replacer_methods_data: replacer_methods,
+replace_table_data: replace_table,
 }
 },
 methods: {
@@ -237,45 +245,36 @@ console.log(error);
 }
 },
 replace_statement_string(TEMPLATE_STR, TABLE_NAME, COLUMN_NAMES, PARAMETERS, B_TABLE_FROM, A_TABLE_TO, B_TABLE_TO, CROSS_TABLE_FROM, CROSS_TABLE_TO) {
-// let tmp = '';
-let tmp = TEMPLATE_STR;
-// only A_TABLE
-const replace_by_replacer = (STR, TARGET_STR, REPLACER_STR, REPLACER_PARAM) => STR.replaceAll(TARGET_STR, this.replacer_methods_data[REPLACER_STR](REPLACER_PARAM));
+    let tmp = TEMPLATE_STR;
+    // only A_TABLE
+    const replace_by_replacer = (STR, TARGET_STR, REPLACER_STR, REPLACER_PARAM) => STR.replaceAll(TARGET_STR, this.replacer_methods_data[REPLACER_STR](REPLACER_PARAM));
+    // why resolve it? cause, the replace_table's parameters from input tag's value string
+    const resolve_param_from_str = (STR) => {
+        switch (STR) {
+            case "TEMPLATE_STR": return TEMPLATE_STR;
+            case "TABLE_NAME": return TABLE_NAME;
+            case "COLUMN_NAMES": return COLUMN_NAMES;
+            case "PARAMETERS": return PARAMETERS;
+            case "B_TABLE_FROM": return B_TABLE_FROM;
+            case "A_TABLE_TO": return A_TABLE_TO;
+            case "B_TABLE_TO": return B_TABLE_TO;
+            case "CROSS_TABLE_FROM": return CROSS_TABLE_FROM;
+            case "CROSS_TABLE_TO": return CROSS_TABLE_TO;
+            default:
+                break;
+        }
+    };
 
-// why resolve it? cause, the replace_table's parameters from input tag's value string
-const resolve_param_from_str = (STR) => {
-    switch (STR) {
-        case "TEMPLATE_STR": return TEMPLATE_STR;
-        case "TABLE_NAME": return TABLE_NAME;
-        case "COLUMN_NAMES": return COLUMN_NAMES;
-        case "PARAMETERS": return PARAMETERS;
-        case "B_TABLE_FROM": return B_TABLE_FROM;
-        case "A_TABLE_TO": return A_TABLE_TO;
-        case "B_TABLE_TO": return B_TABLE_TO;
-        case "CROSS_TABLE_FROM": return CROSS_TABLE_FROM;
-        case "CROSS_TABLE_TO": return CROSS_TABLE_TO;
-        default:
-            break;
-    }
-};
+    this.replace_table_data.forEach(REPLACE_RECORD => tmp = replace_by_replacer(tmp, REPLACE_RECORD[0], REPLACE_RECORD[1], resolve_param_from_str(REPLACE_RECORD[2])));
 
-const replace_table = [
-    ["!!!A_TABLE!!!", "just_replace", "TABLE_NAME"],
-    ["!!!THIS_IS_CHANGEABLE_COLUMN_NAMES!!!", "new_lined_string_to_join_comma_string", "COLUMN_NAMES"],
-    ["!!!THIS_IS_CHANGEABLE_COUPLE_OF_QUESTION_SYMBOLS!!!", "new_lined_string_to_question_symbol_comma_string", "COLUMN_NAMES"],
-    ["!!!THIS_IS_CHANGEABLE_VALUES_PARAMETERS!!!", "new_lined_string_to_question_symbol_comma_string", "PARAMETERS"],
-];
+    // A_TABLE with B_TABLE
+    tmp = arguments.length >= 5 ? tmp
+    .replaceAll(TABLE_NAME, A_TABLE_TO)
+    .replaceAll(B_TABLE_FROM, B_TABLE_TO)
+    .replaceAll(CROSS_TABLE_FROM, CROSS_TABLE_TO)
+    : tmp;
 
-replace_table.forEach(REPLACE_RECORD => tmp = replace_by_replacer(tmp, REPLACE_RECORD[0], REPLACE_RECORD[1], resolve_param_from_str(REPLACE_RECORD[2])));
-
-// A_TABLE with B_TABLE
-tmp = arguments.length >= 5 ? tmp
-.replaceAll(TABLE_NAME, A_TABLE_TO)
-.replaceAll(B_TABLE_FROM, B_TABLE_TO)
-.replaceAll(CROSS_TABLE_FROM, CROSS_TABLE_TO)
-: tmp;
-
-return tmp;
+    return tmp;
 },
 vue_map(vue_data_list) {
 return Object.keys(vue_data_list).map(key => vue_data_list[key]);
