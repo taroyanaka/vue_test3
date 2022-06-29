@@ -245,7 +245,7 @@ console.log(error);
 }
 },
 replace_statement_string(TEMPLATE_STR, TABLE_NAME, COLUMN_NAMES, PARAMETERS, B_TABLE_FROM, A_TABLE_TO, B_TABLE_TO, CROSS_TABLE_FROM, CROSS_TABLE_TO) {
-    let tmp = TEMPLATE_STR;
+    let TEMPORARY_TEMPLATE_STRING = TEMPLATE_STR;
     // only A_TABLE
     const replace_by_replacer = (STR, TARGET_STR, REPLACER_STR, REPLACER_PARAM) => STR.replaceAll(TARGET_STR, this.replacer_methods_data[REPLACER_STR](REPLACER_PARAM));
     // why resolve it? cause, the replace_table's parameters from input tag's value string
@@ -265,16 +265,16 @@ replace_statement_string(TEMPLATE_STR, TABLE_NAME, COLUMN_NAMES, PARAMETERS, B_T
         }
     };
 
-    this.replace_table_data.forEach(REPLACE_RECORD => tmp = replace_by_replacer(tmp, REPLACE_RECORD[0], REPLACE_RECORD[1], resolve_param_from_str(REPLACE_RECORD[2])));
+    this.replace_table_data.forEach(REPLACE_RECORD => TEMPORARY_TEMPLATE_STRING = replace_by_replacer(TEMPORARY_TEMPLATE_STRING, REPLACE_RECORD[0], REPLACE_RECORD[1], resolve_param_from_str(REPLACE_RECORD[2])));
 
     // A_TABLE with B_TABLE
-    tmp = arguments.length >= 5 ? tmp
+    TEMPORARY_TEMPLATE_STRING = arguments.length >= 5 ? TEMPORARY_TEMPLATE_STRING
     .replaceAll(TABLE_NAME, A_TABLE_TO)
     .replaceAll(B_TABLE_FROM, B_TABLE_TO)
     .replaceAll(CROSS_TABLE_FROM, CROSS_TABLE_TO)
-    : tmp;
+    : TEMPORARY_TEMPLATE_STRING;
 
-    return tmp;
+    return TEMPORARY_TEMPLATE_STRING;
 },
 vue_map(vue_data_list) {
 return Object.keys(vue_data_list).map(key => vue_data_list[key]);
