@@ -1,0 +1,1 @@
+.parent{display:grid;grid-template-columns:repeat(10,1fr);grid-template-rows:repeat(10,1fr)}.in_zone{grid-column:1/6;grid-row:1/11;background-color:gray}.out_zone{grid-column:6/11;grid-row:1/11;background-color:#a9a9a9}textarea{width:20rem;height:15rem}textarea.a_table{background-color:pink}textarea.b_table{background-color:#adff2f}
