@@ -1,6 +1,7 @@
 <template>
 <div class="parent">
 <div class="in_zone">
+    <!-- <span>test1</span> -->
 <template v-for='(obj, key, index) in template_data'>
 <div>{{ key }}</div>
 </template>
