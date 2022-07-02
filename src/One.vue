@@ -1,9 +1,17 @@
 <template>
-<h1>test</h1>
+<h1>{{ one }}</h1>
 </template>
 
 
 <script>
+export default {
+    data() {
+        return {
+            // publicPath: process.env.BASE_URL
+            foo: "foo"
+        }
+    }
+}
 </script>
 
 <style>
